@@ -516,6 +516,132 @@ def render_strategy_guide():
     
     st.divider()
     
+    # ========================================
+    # NEW STRATEGIES (BATCHES 4-17)
+    # ========================================
+    st.header("🆕 Extended Strategy Library (69 New)")
+    st.caption("Quick reference for all additional strategies added in batches 4-17")
+    
+    # Batch 4: Classic Indicators
+    with st.expander("📊 Batch 4: Classic Indicators (9 strategies)", expanded=False):
+        st.markdown("""
+        | Strategy | Type | Concept |
+        |----------|------|---------|
+        | **Keltner Breakout** | Breakout | Trade breakouts from Keltner Channels (EMA + ATR bands) |
+        | **MACD Divergence** | Reversal | Trade price-MACD histogram divergences |
+        | **Parabolic SAR** | Trend | Follow Parabolic SAR for dynamic trailing stops |
+        | **Stochastic Momentum** | Oscillator | Trade overbought/oversold stochastic signals |
+        | **Williams %R** | Oscillator | Mean reversion at Williams %R extremes |
+        | **CCI Momentum** | Momentum | CCI zero-line crosses with trend filter |
+        | **Ichimoku Cloud** | Trend | Classic Kumo breakout strategy |
+        | **Elder Ray** | Momentum | Bull/Bear power with EMA confirmation |
+        | **OBV Divergence** | Volume | Trade price-OBV divergences |
+        """)
+    
+    # Batch 5-6: Pivot & Volume
+    with st.expander("📍 Batch 5-6: Pivot & Volume (6 strategies)", expanded=False):
+        st.markdown("""
+        | Strategy | Type | Concept |
+        |----------|------|---------|
+        | **Pivot Point** | Support/Resistance | Trade bounces off classic pivot S/R levels |
+        | **TRIX Momentum** | Momentum | TRIX zero-line crosses with signal confirmation |
+        | **Aroon Trend** | Trend | Aroon Up/Down crosses for early trend detection |
+        | **Force Index** | Volume | Force Index zero-line crosses |
+        | **MFI Reversal** | Mean Reversion | MFI extremes for overbought/oversold |
+        | **A/D Line** | Volume | Accumulation/Distribution line trend |
+        """)
+    
+    # Batch 7-8: Momentum
+    with st.expander("📈 Batch 7-8: Momentum (6 strategies)", expanded=False):
+        st.markdown("""
+        | Strategy | Type | Concept |
+        |----------|------|---------|
+        | **Ultimate Oscillator** | Oscillator | Multi-timeframe momentum extremes |
+        | **DMI Cross** | Trend | +DI/-DI crossovers with ADX filter |
+        | **ROC Momentum** | Momentum | Rate of Change zero-line crosses |
+        | **Hull MA** | Trend | Hull Moving Average direction changes |
+        | **Vortex** | Trend | Vortex +VI/-VI crosses |
+        | **Chaikin Oscillator** | Volume | Chaikin Oscillator zero-line crosses |
+        """)
+    
+    # Batch 9-10: Final Classic
+    with st.expander("📉 Batch 9-10: Final Classic (6 strategies)", expanded=False):
+        st.markdown("""
+        | Strategy | Type | Concept |
+        |----------|------|---------|
+        | **KST** | Momentum | Know Sure Thing signal line crosses |
+        | **Coppock Curve** | Momentum | Coppock Curve zero-line for major shifts |
+        | **PPO** | Momentum | Percentage Price Oscillator signal crosses |
+        | **MACD Zero** | Momentum | MACD line zero crossings |
+        | **RSI Divergence** | Reversal | RSI-price divergences at extremes |
+        | **SMI** | Oscillator | Stochastic Momentum Index signal crosses |
+        """)
+    
+    # Batch 11-12: Optimized
+    with st.expander("🎯 Batch 11-12: Optimized (12 strategies)", expanded=False):
+        st.markdown("""
+        | Strategy | Type | Concept |
+        |----------|------|---------|
+        | **RSI Extreme** | Mean Reversion | RSI < 15 or > 85 bounces with 1:2 R:R |
+        | **Tight EMA Scalp** | Scalping | 5/13 EMA cross with momentum filter |
+        | **Range Breakout** | Breakout | Breakout from consolidation ranges |
+        | **EMA Slope** | Momentum | Trade steep EMA slopes |
+        | **Price Action** | Reversal | Engulfing patterns at swing levels |
+        | **Momentum Burst** | Momentum | Price + volume spike together |
+        | **Triple EMA** | Trend | 8/21/55 EMA alignment |
+        | **Candle Combo** | Pattern | Hammer/Shooting star with confirmation |
+        | **VWAP Bounce** | Mean Reversion | Bounces off VWAP support/resistance |
+        | **HL Breakout** | Breakout | High/Low breakout with EMA trend filter |
+        | **RSI+BB Revert** | Mean Reversion | Double confirmation RSI + Bollinger |
+        | **Quick Scalp** | Scalping | 2 consecutive same-direction bars |
+        """)
+    
+    # Batch 13-14: Trend
+    with st.expander("🚀 Batch 13-14: Trend (12 strategies)", expanded=False):
+        st.markdown("""
+        | Strategy | Type | Concept |
+        |----------|------|---------|
+        | **ATR Trend Rider** | Trend | Ride trends with wide ATR trailing stops |
+        | **Dual TF Momentum** | Multi-TF | Higher TF trend + lower TF entry |
+        | **Vol Contraction** | Breakout | Trade after low volatility squeezes |
+        | **C2C Momentum** | Momentum | Close-to-close streaks |
+        | **Gap Fill** | Mean Reversion | Fade gaps back to previous close |
+        | **Range Revert** | Mean Reversion | Range mean reversion with ADX filter |
+        | **Strong Trend** | Trend | Only trade when ADX > 40 |
+        | **Pullback EMA** | Trend | Pullbacks to 21 EMA in established trends |
+        | **Vol Weighted** | Trend | EMA cross with high volume confirmation |
+        | **Inside Bar BO** | Pattern | Inside bar breakout with trend filter |
+        | **RSI Trending** | Momentum | RSI crosses above/below 50 |
+        | **Close Breakout** | Breakout | Close high/low breakout |
+        """)
+    
+    # Batch 15-17: Final
+    with st.expander("⚡ Batch 15-17: Final (18 strategies)", expanded=False):
+        st.markdown("""
+        | Strategy | Type | Concept |
+        |----------|------|---------|
+        | **Quick RSI Scalp** | Scalping | RSI(5) < 20 or > 80 fast scalping |
+        | **Vol Spike** | Momentum | Trade after big bars (> 2x ATR) |
+        | **EMA Ribbon** | Trend | 8/13/21/34 EMA full alignment |
+        | **Bounce Low** | Mean Reversion | Mean reversion at range lows |
+        | **Mom Continue** | Momentum | Continue in direction of 10-bar momentum |
+        | **Simple PA** | Price Action | 2 consecutive green/red bars |
+        | **Fast Trend Scalp** | Scalping | 3/8 EMA crossover scalping |
+        | **Aggressive BO** | Breakout | Immediate 10-bar high/low breakout |
+        | **Micro Trend** | Trend | 5 EMA direction changes |
+        | **Quick Reversal** | Mean Reversion | Fade > 1.5 ATR extension from SMA |
+        | **Trend Simple** | Trend | Simple above/below 20 EMA |
+        | **Doji Reversal** | Pattern | Doji patterns at extremes |
+        | **Bar Count** | Momentum | 4 consecutive higher/lower closes |
+        | **Opening Move** | Momentum | Trade strong opening gaps |
+        | **Fade Extreme** | Mean Reversion | Fade > 2 ATR single-bar moves |
+        | **Tight Range** | Breakout | Breakout from tight (< 0.5 ATR) bars |
+        | **Mom Filter** | Momentum | EMA cross with ROC momentum filter |
+        | **Final EMA** | Trend | Optimized 10/30 EMA with momentum |
+        """)
+    
+    st.divider()
+    
     # Back to trading button
     st.markdown("### Ready to trade?")
     col1, col2 = st.columns(2)
