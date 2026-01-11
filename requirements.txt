@@ -1,0 +1,23 @@
+# BTC Active Trading Lab - Dependencies
+
+# Dashboard
+streamlit>=1.29.0
+plotly>=5.18.0
+
+# Data processing
+pandas>=2.1.0
+numpy>=1.24.0
+pyarrow>=14.0.0  # For Parquet support
+
+# HTTP client
+httpx>=0.25.0
+
+# Technical indicators
+ta>=0.11.0  # Technical analysis library
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Utilities
+python-dateutil>=2.8.0
