@@ -289,7 +289,7 @@ def main():
     st.sidebar.page_link("app.py", label="🏠 Home")
     st.sidebar.page_link("pages/1_Trading_Dashboard.py", label="📈 Trading Dashboard")
     st.sidebar.page_link("pages/2_Strategy_Guide.py", label="📚 Strategy Guide")
-    st.sidebar.page_link("pages/3_Compare_Strategies.py", label="⚔️ Compare All")
+    st.sidebar.page_link("pages/3_Technical_Indicators.py", label="📊 Technical Indicators")
     
     st.sidebar.divider()
     
@@ -318,7 +318,7 @@ def main():
     
     with col2:
         if st.button("⚔️ Compare All Strategies", type="secondary", use_container_width=True):
-            st.switch_page("pages/3_Compare_Strategies.py")
+            st.switch_page("pages/3_Technical_Indicators.py")
     
     with col3:
         if st.button("📚 Strategy Guide", type="secondary", use_container_width=True):
@@ -332,7 +332,7 @@ def main():
     </div>
     <div class="stat-grid">
         <div class="stat-card">
-            <div class="stat-number">4</div>
+            <div class="stat-number">90</div>
             <div class="stat-label">Strategies</div>
         </div>
         <div class="stat-card">

@@ -1,30 +1,39 @@
 # BTC Active Trading Lab
 
-A local backtesting and strategy comparison dashboard for **BTC perpetual trading** on Hyperliquid. Built for learning and experimenting with active trading strategies.
+A comprehensive backtesting and strategy comparison platform for **BTC perpetual trading** on Hyperliquid. Built for learning, experimenting, and finding winning trading strategies.
 
-![Dashboard Screenshot](docs/dashboard.png)
+## 🏆 Best Performing Strategy
+
+**BREAKOUT** strategy achieved **+13.32% ROI** over 90 days, beating the MA Crossover baseline (+12.39%).
 
 ## Features
 
-- **4 Trading Strategies** to compare:
-  - 📈 **Trend Pullback**: Multi-timeframe trend following with pullback entries
-  - 🚀 **Breakout**: Donchian channel breakout with volatility filter
-  - 🔄 **VWAP Reversion**: Mean reversion to VWAP in ranging markets
-  - 📊 **MA Crossover**: Simple EMA crossover baseline
+### 📊 90+ Trading Strategies
+- **Technical Strategies**: MA Crossover, Trend Pullback, Breakout, VWAP Reversion, OBV Divergence, Chandelier Trend, and more
+- **ML Models**: XGBoost, Random Forest, Neural Network, Stacking Ensemble, Voting Ensemble
+- **Statistical Models**: HMM Regime Detection, Kalman Filter, GARCH Volatility Sizing
+- **Advanced Strategies**: Momentum, ADX Trend, Dual Momentum, Mean Reversion
 
-- **Realistic Backtesting** with:
-  - Trading fees (maker/taker configurable)
-  - Slippage estimation
-  - Funding rate impact
-  - Position sizing based on risk percentage
+### 🤖 ML & Statistical Models
+- **Feature Engineering**: 50+ technical indicators automatically calculated
+- **Walk-Forward Training**: Prevents overfitting with time-series cross-validation
+- **Ensemble Methods**: Stacking, Voting, and Multi-Model ensembles
+- **Regime Detection**: HMM-based market state classification
 
-- **Interactive Dashboard**:
-  - Price charts with trade markers and indicators
-  - Equity curve with drawdown visualization
-  - Comprehensive performance metrics
-  - Filterable trade ledger with export (CSV/JSON)
+### 📈 Interactive Dashboard (6 Pages)
+1. **Trading Dashboard**: Main backtest interface with charts and metrics
+2. **Strategy Guide**: Documentation for all strategies
+3. **Technical Indicators**: Visualize indicators
+4. **Technical Exit Engine**: Advanced exit rules
+5. **ML Models**: 6 tabs for ML/Statistical/Ensemble strategies
+6. **Strategy Comparison**: Compare ALL strategies side-by-side
 
-- **Time Windows**: 24-hour and 7-day backtests (extensible to longer periods)
+### 💰 Realistic Backtesting
+- Trading fees (maker/taker configurable)
+- Slippage estimation
+- Funding rate impact
+- Position sizing based on risk percentage
+- ATR-based stop losses
 
 ## Quick Start
 
@@ -51,12 +60,6 @@ pip install -r requirements.txt
 ### Run the Dashboard
 
 ```bash
-python run.py
-```
-
-Or directly with Streamlit:
-
-```bash
 streamlit run dashboard/app.py
 ```
 
@@ -64,15 +67,30 @@ The dashboard will open at **http://localhost:8501**
 
 ## Usage
 
-1. **Select a Strategy** from the sidebar
-2. **Choose a Time Window** (24h or 7d)
-3. **Adjust Parameters** using the sliders
-4. Click **▶️ Run Backtest**
-5. Analyze results:
-   - View trades on the price chart
-   - Check equity curve and drawdown
-   - Review metrics and trade ledger
-   - Export trades to CSV/JSON
+### Basic Backtesting
+1. Navigate to **Trading Dashboard**
+2. Select a strategy from the sidebar
+3. Choose time window (24h to 180d)
+4. Adjust parameters using sliders
+5. Click **▶️ Run Backtest**
+6. Analyze results and export trades
+
+### ML Models
+1. Navigate to **ML Models** page
+2. Choose from 6 tabs:
+   - 📊 Ensemble Voting - Combine top strategies
+   - 📈 Regime Filter - Market state detection
+   - 📉 Statistical Models - HMM, Kalman, GARCH
+   - 🤖 ML Classifier - XGBoost signal filtering
+   - 🚀 ML Signal Generator - Direct ML signals
+   - 🏆 **Strategy Comparison** - Compare ALL strategies
+
+### Strategy Comparison
+The best way to find winning strategies:
+1. Go to **ML Models** → **🏆 Strategy Comparison** tab
+2. Select time window and risk level
+3. Click **🚀 Run Strategy Comparison**
+4. View ranked results to find top performers
 
 ## Project Structure
 
@@ -96,65 +114,37 @@ project_hyperliquid_bot/
 │   ├── costs.py              # Fee/slippage model
 │   ├── position.py           # Trade management
 │   └── metrics.py            # Performance calculations
-├── strategies/
+├── strategies/               # 15+ technical strategies
 │   ├── base.py               # Strategy interface
+│   ├── ma_crossover.py       # Simple baseline
 │   ├── trend_pullback.py     # Trend following
 │   ├── breakout.py           # Donchian breakout
-│   ├── vwap_reversion.py     # Mean reversion
-│   └── ma_crossover.py       # Simple baseline
+│   └── ...                   # More strategies
+├── models/                   # ML & Statistical models
+│   ├── ensemble.py           # Ensemble voting
+│   ├── ml_signal_generator.py # ML signal generation
+│   ├── advanced_models.py    # Stacking, NN, Voting
+│   ├── additional_strategies.py # Momentum, ADX, etc.
+│   ├── hmm_regime.py         # HMM regime detection
+│   ├── kalman_filter.py      # Kalman trend filter
+│   └── garch_sizing.py       # GARCH volatility sizing
 ├── dashboard/
 │   ├── app.py                # Main Streamlit app
+│   ├── pages/                # Dashboard pages
 │   └── components/           # UI components
+├── scripts/                  # Testing scripts
 └── tests/                    # Unit tests
 ```
 
-## Strategies
+## Top Strategies (90-day, 1h candles)
 
-### Trend Pullback (Recommended for Learning)
-
-- **Concept**: Follow the trend, enter on pullbacks
-- **Higher TF**: EMA determines trend direction
-- **Lower TF**: Wait for price to pull back to slow EMA, enter when fast EMA crossed
-- **Exit**: Trailing stop using ATR
-
-### Breakout
-
-- **Concept**: Enter on volatility expansion
-- **Signal**: Price breaks Donchian channel high/low
-- **Filter**: Only trade when ATR ratio shows volatility expansion
-- **Exit**: Trail using ATR or Donchian mid
-
-### VWAP Reversion
-
-- **Concept**: Mean reversion in ranging markets
-- **Filter**: Low ADX indicates ranging condition
-- **Entry**: Price deviates from VWAP + RSI confirmation
-- **Target**: Return to VWAP
-
-### MA Crossover (Baseline)
-
-- **Concept**: Simple EMA crossover
-- **Purpose**: Validate that the backtest engine works
-- **Long**: Fast EMA crosses above slow EMA
-- **Short**: Fast EMA crosses below slow EMA
-
-## Backtest Engine Details
-
-### Execution Model
-
-- **Entry Timing**: Signal on bar close → Execute at next bar open
-- **Stop-Loss**: Checked against bar high/low, fills at stop price
-- **Trailing**: Updates each bar based on price action
-- **Costs**: Applied to all entries and exits
-
-### Cost Model (Defaults)
-
-| Cost Type | Default Value |
-|-----------|---------------|
-| Maker Fee | 0.01% (1 bp) |
-| Taker Fee | 0.035% (3.5 bp) |
-| Slippage | 1 bp |
-| Funding | 0.01% per 8h |
+| Strategy | ROI | Trades | Type |
+|----------|-----|--------|------|
+| 🚀 **Breakout** | +13.32% | 10 | Technical |
+| 📈 MA Crossover | +12.39% | 6 | Technical |
+| 📈 Trend System | +11.78% | 4 | Technical |
+| 📊 ADX Trend | +9.28% | 5 | Technical |
+| 🤝 Hybrid MA+ML | +9.55% | 4 | Hybrid |
 
 ## Data Source
 
@@ -169,14 +159,6 @@ Data is fetched from **Hyperliquid's public API**:
 ```bash
 pytest tests/ -v
 ```
-
-## Configuration
-
-Edit `config/settings.py` to customize:
-- API endpoints (mainnet/testnet)
-- Default capital and risk settings
-- Cache directory
-- Fee structure
 
 ## Limitations
 

@@ -649,8 +649,8 @@ def render_strategy_guide():
         if st.button("🎯 Trading Dashboard", type="primary", use_container_width=True):
             st.switch_page("pages/1_Trading_Dashboard.py")
     with col2:
-        if st.button("📊 Compare Strategies", use_container_width=True):
-            st.switch_page("pages/3_Compare_Strategies.py")
+        if st.button("📊 Technical Indicators", use_container_width=True):
+            st.switch_page("pages/3_Technical_Indicators.py")
 
 
 if __name__ == "__main__":
