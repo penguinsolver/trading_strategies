@@ -105,6 +105,7 @@ class MLEnhancedBreakout:
             use_label_encoder=False,
             eval_metric='mlogloss',
             verbosity=0,
+            n_jobs=1,
         )
         
         with warnings.catch_warnings():
