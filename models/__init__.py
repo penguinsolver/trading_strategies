@@ -27,6 +27,19 @@ from .additional_strategies import (
     OptimizedMACrossover, DualMomentumStrategy, TrendFollowingSystem,
 )
 
+# Optimized ML Models (Grid Search)
+from .optimized_models import (
+    GridSearchOptimizer, OptimizedConfig,
+    OptimizedXGBoost, OptimizedRandomForest, OptimizedLightGBM,
+    AggressiveMLEnsemble,
+)
+
+# ML-Enhanced Strategies (WINNERS)
+from .ml_enhanced import (
+    MLEnhancedBreakout, MLEnhancedMACrossover, MLTrendFollower,
+    EnhancedConfig,
+)
+
 __all__ = [
     # Ensemble
     "EnsembleStrategy", "EnsembleConfig",
@@ -50,4 +63,11 @@ __all__ = [
     # Additional Strategies
     "MomentumStrategy", "ADXTrendStrategy", "BreakoutStrategy",
     "OptimizedMACrossover", "DualMomentumStrategy", "TrendFollowingSystem",
+    # Optimized ML Models
+    "GridSearchOptimizer", "OptimizedConfig",
+    "OptimizedXGBoost", "OptimizedRandomForest", "OptimizedLightGBM",
+    "AggressiveMLEnsemble",
+    # ML-Enhanced Strategies (WINNERS)
+    "MLEnhancedBreakout", "MLEnhancedMACrossover", "MLTrendFollower",
+    "EnhancedConfig",
 ]

@@ -57,6 +57,13 @@ try:
         StackingEnsemble, NeuralNetworkModel, VotingEnsembleModel,
         MeanReversionStrategy, HybridMACrossover, AdvancedConfig
     )
+    from models.ml_enhanced import (
+        MLEnhancedBreakout, MLEnhancedMACrossover, MLTrendFollower,
+        EnhancedConfig
+    )
+    from models.optimized_models import (
+        OptimizedXGBoost, OptimizedRandomForest, OptimizedConfig
+    )
     HAS_ADVANCED = True
 except ImportError:
     HAS_ADVANCED = False
