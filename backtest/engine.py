@@ -258,24 +258,31 @@ class BacktestEngine:
         equity: float,
         risk_per_trade: float,
     ) -> Position:
-        """Execute an entry and return the new position."""
+        """
+        Execute an entry and return the new position.
+        
+        NEW MODEL (Capital Allocation + Max Leverage):
+        - Allocate `risk_per_trade` fraction of capital to each trade
+        - Apply up to `max_leverage` on that allocation
+        - Position size = (allocated_capital * leverage) / entry_price
+        """
         side = entry_info["side"]
         stop_price = entry_info["stop_price"]
         
         # Apply slippage to entry
         entry_price = self.cost_model.apply_entry_slippage(price, side)
         
-        # Calculate position size based on risk
-        if stop_price is not None:
-            risk_per_unit = abs(entry_price - stop_price)
-            if risk_per_unit > 0:
-                risk_amount = equity * risk_per_trade
-                size = risk_amount / risk_per_unit
-            else:
-                size = (equity * risk_per_trade) / entry_price  # Fallback
-        else:
-            # No stop, use notional sizing
-            size = (equity * risk_per_trade * 10) / entry_price  # 10x multiplier for no-stop
+        # NEW: Capital allocation model with max leverage
+        max_leverage = 10.0  # Hard constraint: max 10x leverage
+        
+        # Capital allocated to this trade (e.g., 10% of equity)
+        allocated_capital = equity * risk_per_trade
+        
+        # Calculate position size based on leverage
+        # Notional = allocated_capital * leverage
+        # Position size = Notional / price
+        notional = allocated_capital * max_leverage
+        size = notional / entry_price
         
         # Calculate trailing stop distance
         trailing_distance = None

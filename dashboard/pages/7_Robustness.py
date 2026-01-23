@@ -1,17 +1,30 @@
 """
 Robustness Validation Dashboard Page
-Displays results of the strategy across multiple historical 90-day periods.
+Displays results of the BEST strategy configuration across 5 historical periods.
+Best Config: w200_s10_lb5_atr2.5_r30%_ml0.3
 """
 import sys
+import json
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import numpy as np
+
+def load_trade_logs():
+    """Load trade logs from JSON file."""
+    try:
+        log_path = Path(__file__).parent.parent / "data" / "trade_logs.json"
+        with open(log_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        st.error(f"Could not load trade logs: {e}")
+        return None
 
 def render_robustness_page():
-    st.set_page_config(layout="wide") # Use wide mode if not already
+    st.set_page_config(layout="wide", page_title="Strategy Robustness")
     
     st.markdown("""
     <div style="
@@ -23,133 +36,175 @@ def render_robustness_page():
         box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3);
     ">
         <h1 style="margin: 0; font-size: 2rem; font-weight: 700;">🛡️ Strategy Robustness Validation</h1>
-        <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Testing MLEnhancedBreakout + Compound across 5 independent historical periods</p>
+        <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">MLEnhancedBreakout + Compound | 5 Independent Periods | Full Trade Logs</p>
     </div>
     """, unsafe_allow_html=True)
 
-    st.warning("⚠️ Validated on **5 independent periods** (Oct 2024 - Jan 2026) using Binance BTC/USDT data as proxy.")
+    # Load trade logs
+    trade_logs = load_trade_logs()
     
-    # 1. Summary Metrics
-    st.markdown("### 🏆 Most Robust Configuration: `w250_s50_lb10_atr2.0`")
+    if trade_logs:
+        total_roi = [p['roi_pct'] for p in trade_logs]
+        avg_roi = np.mean(total_roi)
+        min_roi = min(total_roi)
+        avg_sharpe = np.mean([p['sharpe'] for p in trade_logs])
+        min_sharpe = min(p['sharpe'] for p in trade_logs)
+        total_trades = sum(p['num_trades'] for p in trade_logs)
+        
+        all_sharpe_pass = all(p['sharpe'] >= 2.0 for p in trade_logs)
+        
+        if all_sharpe_pass:
+            st.success(f"✅ **Sharpe > 2.0 achieved on ALL 5 periods!** Loaded {total_trades} trades.")
+        else:
+            st.warning(f"⚠️ Some periods have Sharpe < 2.0")
+    else:
+        avg_roi = 0
+        min_roi = 0
+        avg_sharpe = 0
+        min_sharpe = 0
+        total_trades = 0
+    
+    # Best Config Banner
+    st.markdown("### 🏆 Best Configuration: `w200_s10_lb5_atr2.5_r30%_ml0.3`")
     
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Avg ROI (5 Periods)", "+37,711%", delta="Target: >10,000%")
-    col2.metric("Min ROI (Worst Case)", "+6,495%", delta="Close")
-    col3.metric("Avg Sharpe", "2.29", delta="Target: >2.0")
-    col4.metric("Validation Status", "4/5 Passed >10k%", delta="Strong")
+    col1.metric("Avg ROI", f"+{avg_roi:,.0f}%")
+    col2.metric("Min ROI", f"{min_roi:+,.0f}%")
+    col3.metric("Avg Sharpe", f"{avg_sharpe:.2f}")
+    col4.metric("Min Sharpe", f"{min_sharpe:.2f}", delta="Target: >2.0")
     
-    # 2. Detailed Performance Table
+    # Period Summary
     st.markdown("### 📅 Period-by-Period Performance")
     
-    data = [
-        {
-            "Period": "1 (Oct '25 - Jan '26)",
-            "Market Condition": "Bearish (-18%)",
-            "ROI": "+31,411%",
-            "Sharpe Ratio": "1.94",
-            "Result": "✅ PASS"
-        },
-        {
-            "Period": "2 (Jul '25 - Oct '25)",
-            "Market Condition": "Bullish (+35%)",
-            "ROI": "+73,314%",
-            "Sharpe Ratio": "3.68",
-            "Result": "✅ SUPER PASS"
-        },
-        {
-            "Period": "3 (Apr '25 - Jul '25)",
-            "Market Condition": "Choppy (+5%)",
-            "ROI": "+10,363%",
-            "Sharpe Ratio": "2.52",
-            "Result": "✅ PASS"
-        },
-        {
-            "Period": "4 (Jan '25 - Apr '25)",
-            "Market Condition": "Flat (-2%)",
-            "ROI": "+6,495%",
-            "Sharpe Ratio": "0.59",
-            "Result": "⚠️ Good Profit"
-        },
-        {
-            "Period": "5 (Oct '24 - Jan '25)",
-            "Market Condition": "Trending (+20%)",
-            "ROI": "+66,974%",
-            "Sharpe Ratio": "2.75",
-            "Result": "✅ SUPER PASS"
-        }
-    ]
+    if trade_logs:
+        period_data = []
+        for p in trade_logs:
+            sharpe_status = "✅" if p['sharpe'] >= 2.0 else "❌"
+            period_data.append({
+                "Period": p['period'],
+                "Date Range": p['date_range'],
+                "Start": f"${p['start_capital']:,.0f}",
+                "End": f"${p['end_capital']:,.0f}",
+                "ROI": f"{p['roi_pct']:+,.0f}%",
+                "Sharpe": f"{p['sharpe']:.2f} {sharpe_status}",
+                "Trades": p['num_trades'],
+                "Win Rate": f"{p['win_rate']:.0f}%"
+            })
+        df_periods = pd.DataFrame(period_data)
+        st.dataframe(df_periods, use_container_width=True, hide_index=True)
     
-    df = pd.DataFrame(data)
-    st.dataframe(df, use_container_width=True, hide_index=True)
-
-    # 3. REPLICATION GUIDE (New Section)
+    # Replication Guide
     st.markdown("---")
-    st.markdown("### 🛠️ Replication Guide: How to Run This Strategy")
-    st.markdown("Copy these settings into your bot configuration to replicate the 'Holy Grail' robustness results.")
+    st.markdown("### 🛠️ Replication Guide")
     
     c1, c2 = st.columns([1, 1])
     
     with c1:
-        st.subheader("1. Strategy Parameters")
+        st.subheader("Strategy Parameters")
         st.code("""
-# models/ml_enhanced.py OR config/strategies.yaml
+# MLEnhancedBreakout Config
+window_size = 200     # hours
+step_size = 10        # hours  
+lookback = 5          # Donchian bars
+atr_period = 14       # ATR Period
+atr_multiplier = 2.5  # Stop Loss Width
 
-class MLEnhancedBreakout:
-    lookback = 10         # Donchian Channel Lookback
-    atr_period = 14       # ATR Calculation Period
-    atr_multiplier = 2.0  # Stop Loss Width (2.0x ATR)
-    
-class EnhancedConfig:
-    min_ml_confidence = 0.35  # Minimum ML confidence score
-    forward_bars = 8          # Prediction horizon
-    n_estimators = 100        # XGBoost trees
+# ML Config (EnhancedConfig)
+min_ml_confidence = 0.30
+forward_bars = 8
+n_estimators = 100
         """, language="python")
 
     with c2:
-        st.subheader("2. Risk & Execution")
+        st.subheader("Risk & Execution")
         st.code("""
-# config/settings.py
+# Risk Settings (HARD CONSTRAINTS)
+RISK_PER_TRADE = 0.30  # 30% capital allocation
+MAX_LEVERAGE = 10      # 10x max leverage
+TIMEFRAME = '1h'       # Hourly candles
 
-RISK_PER_TRADE = 0.10     # 10% Risk per trade (Aggressive)
-LEVERAGE = 1              # No Leverage (Spot/Perp 1x)
-TIMEFRAME = '1h'          # Hourly Candles
+# Position Sizing Formula:
+# Notional = Capital × 0.30 × 10
+# Size = Notional / Entry Price
         """, language="python")
+    
+    # Detailed Trade Logs
+    st.markdown("---")
+    st.markdown("### 📊 Detailed Trade Logs (Expandable)")
+    
+    if trade_logs:
+        for p in trade_logs:
+            with st.expander(f"📈 Period {p['period']}: {p['date_range']} | ROI: {p['roi_pct']:+,.0f}% | Sharpe: {p['sharpe']:.2f}"):
+                trades_df = pd.DataFrame(p['trades'])
+                
+                if not trades_df.empty:
+                    display_df = trades_df[[
+                        'entry_time', 'exit_time', 'direction', 
+                        'entry_price', 'exit_price', 'stop_loss',
+                        'position_size', 'notional', 'leverage_used',
+                        'price_change_pct', 'pnl_dollars', 'pnl_pct',
+                        'capital_before', 'capital_after'
+                    ]].copy()
+                    
+                    display_df.columns = [
+                        'Entry', 'Exit', 'Dir',
+                        'Entry $', 'Exit $', 'Stop $',
+                        'Size', 'Notional', 'Lev',
+                        'Price Δ%', 'P&L $', 'P&L %',
+                        'Cap Before', 'Cap After'
+                    ]
+                    
+                    # Format numbers
+                    display_df['Entry $'] = display_df['Entry $'].apply(lambda x: f"${x:,.0f}")
+                    display_df['Exit $'] = display_df['Exit $'].apply(lambda x: f"${x:,.0f}")
+                    display_df['Stop $'] = display_df['Stop $'].apply(lambda x: f"${x:,.0f}")
+                    display_df['Size'] = display_df['Size'].apply(lambda x: f"{x:.4f}")
+                    display_df['Notional'] = display_df['Notional'].apply(lambda x: f"${x:,.0f}")
+                    display_df['Lev'] = display_df['Lev'].apply(lambda x: f"{x:.1f}x")
+                    display_df['Price Δ%'] = display_df['Price Δ%'].apply(lambda x: f"{x:+.2f}%")
+                    display_df['P&L $'] = display_df['P&L $'].apply(lambda x: f"${x:+,.2f}")
+                    display_df['P&L %'] = display_df['P&L %'].apply(lambda x: f"{x:+.2f}%")
+                    display_df['Cap Before'] = display_df['Cap Before'].apply(lambda x: f"${x:,.0f}")
+                    display_df['Cap After'] = display_df['Cap After'].apply(lambda x: f"${x:,.0f}")
+                    
+                    st.dataframe(display_df, use_container_width=True, hide_index=True, height=400)
+                    
+                    st.markdown(f"""
+                    **Summary**: {p['num_trades']} trades | Win Rate: {p['win_rate']:.0f}% |
+                    Start: ${p['start_capital']:,.0f} → End: ${p['end_capital']:,.0f} | 
+                    **ROI: {p['roi_pct']:+,.2f}%** | **Sharpe: {p['sharpe']:.2f}**
+                    """)
+    
+    # Equity Curve
+    st.markdown("---")
+    st.markdown("### 📈 Equity Curve (All Periods)")
+    
+    if trade_logs:
+        fig = go.Figure()
+        colors = ['#ef4444', '#22c55e', '#3b82f6', '#f59e0b', '#8b5cf6']
         
-        st.info("""
-        **Note on Meta-Strategy (`w250_s50`)**:
-        The code `w250_s50` refers to the simulation method:
-        - **Window (w)**: 250 hours (run strategy for ~10 days)
-        - **Step (s)**: 50 hours (restart/sample every ~2 days)
+        for i, p in enumerate(trade_logs):
+            trades = p['trades']
+            if trades:
+                equity = [p['start_capital']] + [t['capital_after'] for t in trades]
+                x_vals = list(range(len(equity)))
+                
+                fig.add_trace(go.Scatter(
+                    x=x_vals, 
+                    y=equity, 
+                    name=f"Period {p['period']} ({p['roi_pct']:+,.0f}%)",
+                    line=dict(color=colors[i % len(colors)], width=2)
+                ))
         
-        For **Live Trading**, simply running the strategy continuously is equivalent to running a single infinite window. The parameters above are optimized for this continuous robustness.
-        """)
-
-    # 4. Visualization
-    st.markdown("### 📈 Equity Curve Simulation (Log Scale)")
-    
-    days = list(range(90))
-    import numpy as np
-    
-    fig = go.Figure()
-    
-    yields = [315.11, 734.14, 104.63, 65.95, 670.74]
-    colors = ['#ef4444', '#22c55e', '#3b82f6', '#f59e0b', '#8b5cf6']
-    
-    for i, y_mult in enumerate(yields):
-        r = np.log(y_mult)/90
-        vol = 0.15 if i != 3 else 0.05 
-        equity = [10000 * np.exp(r * t) * (1 + vol*np.random.normal(0, 0.1)) for t in days]
-        fig.add_trace(go.Scatter(x=days, y=equity, name=f"Period {i+1} (Oct-Jan)", line=dict(color=colors[i], width=2)))
-    
-    fig.update_layout(
-        title="Comparative Growth (90 Days) - Log Scale",
-        xaxis_title="Days",
-        yaxis_title="Equity ($) - Log Scale",
-        yaxis_type="log",
-        template="plotly_dark",
-        height=500
-    )
-    st.plotly_chart(fig, use_container_width=True)
+        fig.update_layout(
+            title="Portfolio Value Progression (Trade-by-Trade)",
+            xaxis_title="Trade #",
+            yaxis_title="Portfolio Value ($)",
+            yaxis_type="log",
+            template="plotly_dark",
+            height=500
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == "__main__":
     render_robustness_page()
